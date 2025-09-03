@@ -53,3 +53,32 @@ So the final flow is:
 
 **User Visits Web App → Authentication → Patient Info → AI Suggests Specialist → Doctor Selection → Voice Conversation → Call Details → Report Generated**
 
+
+Perfect 👍 you want to keep the **VAPI flow** as a separate diagram. The screenshot you shared already outlines it well. Here’s a clean description of this **VAPI Flow**:
+
+---
+
+### **VAPI.ai Flow (Voice Agent Processing)**
+
+1. **Speech-to-Text**
+
+   * Converts user’s spoken input into text.
+
+2. **LLM Model**
+
+   * Processes the transcribed text.
+   * Generates a meaningful response.
+
+3. **Text-to-Speech**
+
+   * Converts LLM response back into voice output.
+
+4. **Speech-to-Text (Live Streaming)** *(Assembly.AI)*
+
+   * Captures ongoing conversation in real-time for monitoring/transcription.
+
+5. **AI Medical Voice Agent**
+
+   * Handles the interaction loop between patient and doctor.
+   * Ensures medical context is preserved.
+
