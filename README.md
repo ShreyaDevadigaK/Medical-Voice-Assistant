@@ -38,11 +38,19 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## ✨ Core Features
+- **🎙️ Real-time AI Voice Agent**: Powered by Vapi and Deepgram (Nova-2) for ultra-fast, reliable conversational health consultations.
+- **📋 Automated Medical Reports**: Safely extracts clinical data from voice transcripts to generate instantly accessible medical summaries.
+- **📄 PDF Export**: Users can easily download their generated medical reports as clean, formatted PDF documents.
+- **🎨 Premium UI/UX**: Built with Framer Motion, styled with Aceternity UI, featuring frosted-glass dash headers, dynamic bento-grid layouts, and interactive premium components.
+- **🗄️ Scalable Architecture**: Robust serverless database powered by Neon Postgres and Drizzle ORM, with perfectly decoupled storage for raw conversations and parsed medical reports.
+
 ## 🛠 Tech Stack
-- **Framework**: Next.js 15
-- **Auth**: Clerk
-- **Database**: Neon (PostgreSQL) with Drizzle ORM
-- **Voice Agent**: Vapi AI
-- **AI Models**: OpenRouter (Gemini / OpenAI)
-- **Styling**: Tailwind CSS v4, Lucide Icons, Shadcn/UI, Tabler Icons.
-- **Animations**: Framer Motion, tw-animate-css.
+- **Framework**: Next.js 15 (App Router)
+- **Authentication**: Clerk
+- **Database**: Neon (Serverless PostgreSQL) + Drizzle ORM
+- **Voice AI**: Vapi / Deepgram Nova-2
+- **LLMs**: OpenRouter (OpenAI, Gemini)
+- **Styling**: Tailwind CSS, Shadcn UI, Aceternity UI
+- **PDF Generation**: `jspdf` & `html2canvas`
+- **Animations**: Framer Motion
