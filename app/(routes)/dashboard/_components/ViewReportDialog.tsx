@@ -12,6 +12,7 @@ import {
 import { Button } from "@/Components/ui/button";
 import { SessionDetail } from "../medical-agent/[sessionId]/page";
 import moment from "moment";
+import DownloadReportButton from "./DownloadReportButton";
 
 type Props = {
   record: SessionDetail;
@@ -71,9 +72,12 @@ export default function ViewReportDialog({ record }: Props) {
 
         <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle asChild>
-              <h2 className="text-center text-4xl">🩺 Medical AI Voice Agent Report</h2>
-            </DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle asChild>
+                <h2 className="text-center text-4xl flex-1">🩺 Medical AI Voice Agent Report</h2>
+              </DialogTitle>
+              <DownloadReportButton record={record} showText variant="outline" />
+            </div>
             <DialogDescription asChild>
              <div className="mt-10 space-y-6 text-base">
                 {/* Session Info */}

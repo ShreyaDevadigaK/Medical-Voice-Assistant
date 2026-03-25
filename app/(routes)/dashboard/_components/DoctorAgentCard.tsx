@@ -1,76 +1,86 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { Button } from '@/Components/ui/button'
-import { IconArrowRight } from '@tabler/icons-react'
-import { Loader2Icon } from 'lucide-react' 
+import { ArrowRight, Loader2 } from 'lucide-react'
 import { Badge } from '@/Components/ui/badge';
 import { useAuth } from '@clerk/nextjs'
-import { useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 
- export type doctorAgent={
-    id:number,
-    specialist:string,
-    description:string,
-    image:string,
-    agentPrompt:string,
-    voiceId?:string,
-    subscriptionRequired:boolean
+export type doctorAgent = {
+  id: number,
+  specialist: string,
+  description: string,
+  image: string,
+  agentPrompt: string,
+  voiceId?: string,
+  subscriptionRequired: boolean
+}
 
+type props = {
+  doctorAgent: doctorAgent
 }
-type props={
-   doctorAgent:doctorAgent 
-}
-function DoctorAgentCard({doctorAgent}:props) {
+
+function DoctorAgentCard({ doctorAgent }: props) {
   const [loading, setLoading] = useState(false);
-  const router=useRouter();
-
-  const {has} =useAuth();
+  const router = useRouter();
+  const { has } = useAuth();
   //@ts-ignore
-  const paidUser=has && has({plan:'pro'})
-  console.log(paidUser);
+  const paidUser = has && has({ plan: 'pro' })
 
-  
   const onStartConsultation = async () => {
-      setLoading(true);
-      const cleanDoctor = JSON.parse(JSON.stringify(doctorAgent));
-      // Save All Info To Database
-      const result = await axios.post("/api/session-chat", {
-        notes: 'New Query',
-        selectedDoctor: cleanDoctor,
-      });
-  
-      console.log(result.data);
-      if (result.data?.sessionId) {
-        console.log(result.data.sessionId);
-        router.push("/dashboard/medical-agent/" + result.data.sessionId);
-      }
-  
-      setLoading(false);
-    }; 
-    
+    setLoading(true);
+    const cleanDoctor = JSON.parse(JSON.stringify(doctorAgent));
+    const result = await axios.post("/api/session-chat", {
+      notes: 'New Query',
+      selectedDoctor: cleanDoctor,
+    });
+    if (result.data?.sessionId) {
+      router.push("/dashboard/medical-agent/" + result.data.sessionId);
+    }
+    setLoading(false);
+  };
 
-    return (
-    <div className='relative'>
-      {doctorAgent.subscriptionRequired &&<Badge className='absolute m-2 right-0'>
-        Premium
-      </Badge>}
-      
+  return (
+    <div className="group relative flex flex-col rounded-2xl overflow-hidden border border-gray-100 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
 
-      <Image 
-      src={doctorAgent.image}
-      alt={doctorAgent.specialist}
-      width={200} height={300}
-      className='w-full h-[250px] object-cover rounded-xl'/>
-    <h2 className='font-bold mt-2'>{doctorAgent.specialist}</h2>
-    <p className='line-clamp-2 text-sm text-gray-500'>{doctorAgent.description}</p>
-    <Button className='w-full mt-2' 
-    onClick={onStartConsultation}
-    disabled={!paidUser&&doctorAgent.subscriptionRequired}>
-      Start Consultation{loading?<Loader2Icon className='animate-spin'/>:<IconArrowRight/>}</Button>
-    </div> 
+      {/* Premium Badge */}
+      {doctorAgent.subscriptionRequired && (
+        <Badge className="absolute top-3 right-3 z-10 bg-gradient-to-r from-violet-500 to-purple-600 text-white border-0 shadow-md text-xs">
+          Premium
+        </Badge>
+      )}
+
+      {/* Doctor Image */}
+      <div className="overflow-hidden">
+        <Image
+          src={doctorAgent.image}
+          alt={doctorAgent.specialist}
+          width={300}
+          height={300}
+          className="w-full h-[200px] object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+      </div>
+
+      {/* Card Content */}
+      <div className="flex flex-col flex-1 p-4 gap-2">
+        <h2 className="font-bold text-base text-gray-900 leading-tight">{doctorAgent.specialist}</h2>
+        <p className="text-sm text-gray-500 line-clamp-2 flex-1 leading-relaxed">{doctorAgent.description}</p>
+
+        <Button
+          className="w-full mt-3 gap-2 group/btn"
+          onClick={onStartConsultation}
+          disabled={(!paidUser && doctorAgent.subscriptionRequired) || loading}
+        >
+          {loading ? (
+            <><Loader2 className="h-4 w-4 animate-spin" />Starting...</>
+          ) : (
+            <><span>Start Consultation</span><ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" /></>
+          )}
+        </Button>
+      </div>
+    </div>
   )
 }
 

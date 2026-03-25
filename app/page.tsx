@@ -1,7 +1,7 @@
 "use client";
 
 import { FeatureBentoGrid } from "@/_components/FeatureBentoGrid";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { Button } from "@/Components/ui/button";
 import Link from "next/link";
@@ -57,53 +57,45 @@ export default function HeroSectionOne() {
           in class, state of the art, cutting edge AI tools to get your website
           up.
         </motion.p>
-        <Link href={"./sign-in"}>
-          <motion.div
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            transition={{
-              duration: 0.3,
-              delay: 1,
-            }}
-            className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-4"
-          >
-            <button className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
-              Get Started
-            </button>
-          </motion.div>
-        </Link>
 
+        {/* CTA Buttons */}
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 10,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 0.3,
-            delay: 1.2,
-          }}
-          className="relative z-10 mt-20 rounded-3xl border border-neutral-200 bg-neutral-100 p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-10 flex flex-col sm:flex-row gap-4 items-center justify-center w-full"
         >
-          <div className="mx-auto max-w-3xl overflow-hidden rounded-xl border border-gray-300 shadow-md dark:border-gray-700">
+          <Link href="/sign-in" className="w-full sm:w-auto">
+            <button className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-slate-900 text-white font-semibold shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-1 hover:shadow-xl hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 flex items-center justify-center gap-2">
+              Start Building Free
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          </Link>
+        </motion.div>
+
+        {/* Dashboard Preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="mt-20 w-full max-w-5xl rounded-2xl border border-slate-200/50 bg-white/40 p-2 shadow-2xl backdrop-blur-xl dark:border-slate-800/50 dark:bg-slate-900/40 relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-slate-950 dark:via-slate-950/80 z-10 bottom-0 h-40 mt-auto" />
+          <div className="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 relative">
             <img
               src="/landing.jpeg"
-              alt="Landing page preview"
-              className="aspect-[16/9] h-auto w-full object-cover transition-transform duration-300 hover:scale-105"
-              height={800}
-              width={800}
+              alt="Dashboard interface"
+              className="w-full h-auto object-cover transform transition-transform hover:scale-[1.02] duration-700"
             />
           </div>
         </motion.div>
       </div>
-      <FeatureBentoGrid />
+
+      <div className="relative z-10 w-full bg-white dark:bg-slate-850">
+        <FeatureBentoGrid />
+      </div>
     </div>
   );
 }
@@ -125,8 +117,21 @@ const Navbar = () => {
         </Link>
       ) : (
         <div className="flex gap-5 items-center">
-          <UserButton />
-          <Button onClick={() => router.push("/dashboard")}>Dashboard</Button>
+          <Button 
+            className="rounded-lg bg-black text-white hover:bg-gray-800 font-medium px-4 py-2 transition-all"
+            onClick={() => router.push("/dashboard")}
+          >
+            Dashboard
+          </Button>
+          <div className="flex items-center justify-center">
+            <UserButton 
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "size-10 rounded-full border border-gray-200 shadow-sm",
+                },
+              }}
+            />
+          </div>
         </div>
       )}
     </nav>

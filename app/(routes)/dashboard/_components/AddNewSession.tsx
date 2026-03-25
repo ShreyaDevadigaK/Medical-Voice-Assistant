@@ -131,23 +131,32 @@ function AddNewSession() {
         </DialogTrigger>
 
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Basic Details</DialogTitle>
+          <DialogHeader className="mb-2">
+            <DialogTitle className="text-2xl font-bold text-gray-900">Start a New Consultation</DialogTitle>
             <DialogDescription asChild>
               {suggestedDoctors.length === 0 ? (
-                <div>
-                  <h2>Add Symptoms or any Other Details</h2>
-                  <Textarea
-                    placeholder="Add Detail here..."
-                    className="h-[200px] mt-1"
-                    onChange={(e) => setNote(e.target.value)}
-                    value={note} 
-                  />
+                <div className="flex flex-col gap-3 py-2">
+                  <p className="text-gray-500 text-sm">
+                    Please describe what you're experiencing. The more details you provide, the better we can match you with the right specialist.
+                  </p>
+                  <div className="grid gap-2 mt-2">
+                    <label className="text-sm font-semibold text-gray-700">
+                      Symptoms & Details
+                    </label>
+                    <Textarea
+                      placeholder="e.g., I've had a persistent headache for 3 days, feeling slightly dizzy..."
+                      className="h-[150px] resize-none focus-visible:ring-blue-500 text-base"
+                      onChange={(e) => setNote(e.target.value)}
+                      value={note} 
+                    />
+                  </div>
                 </div>
               ) : (
-                <div>
-                  <h2>Select the doctor</h2>
-                  <div className="grid grid-cols-3 gap-5">
+                <div className="py-2">
+                  <p className="text-gray-500 text-sm mb-4">
+                    Based on your symptoms, we recommend consulting one of these specialists. Select a doctor to begin your voice call.
+                  </p>
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto p-1">
                     
                     {suggestedDoctors.map((doctor, index) => (
                       <SuggestedDoctorCard

@@ -35,11 +35,32 @@ function MedicalVoiceAgent() {
   const [liveTranscript, setLivetranscript] = useState<string>();
   const [messages, setMessages] = useState<messages[]>([]);
   const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
     sessionId && GetSessionDetails();
   }, [sessionId]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (callStarted) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setTimer(0);
+    }
+    return () => clearInterval(interval);
+  }, [callStarted]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  };
 
   const GetSessionDetails = async () => {
     const result = await axios.get("/api/session-chat?sessionId=" + sessionId);
@@ -77,20 +98,20 @@ function MedicalVoiceAgent() {
     setVapi(vapiInstance);
     // Corrected transcriber and voice config according to expected types
     const VapiAgentConfig = {
-      name: "AI Medical Doctor Voice Agent",
       firstMessage:
         "Hi there! I'm your AI Medical Assistant. I'm here to help you with any health questions or concerns you might have today. How are you feeling?",
       transcriber: {
-        provider: "assembly-ai",
+        provider: "deepgram",
+        model: "nova-2",
         language: "en",
       },
       voice: {
-        provider: "playht",
+        provider: "vapi",
         voiceId: sessionDetail?.selectedDoctor?.voiceId,
       },
       model: {
         provider: "openai",
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -107,9 +128,7 @@ function MedicalVoiceAgent() {
       console.error("🚫 Microphone access error", err);
     }
 
-    vapiInstance.start(process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID);
-    //@ts-ignore
-    //vapiInstance.start({VapiAgentConfig});
+    vapiInstance.start(process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID!, VapiAgentConfig as any);
 
     console.log("Starting call with config:", VapiAgentConfig);
     console.log("voiceId:", sessionDetail?.selectedDoctor?.voiceId);
@@ -150,13 +169,13 @@ function MedicalVoiceAgent() {
 
     onSpeechStart = () => {
       console.log("Assistant started speaking");
-      setCurrentRole("assistant");
+      setCurrentRole("Assistant");
     };
     vapiInstance.on("speech-start", onSpeechStart);
 
     onSpeechEnd = () => {
       console.log("Assistant stopped speaking");
-      setCurrentRole("user");
+      setCurrentRole("User");
     };
     vapiInstance.on("speech-end", onSpeechEnd);
   };
@@ -218,7 +237,7 @@ function MedicalVoiceAgent() {
           {callStarted ? "Connected..." : "Not Connected"}
         </h2>
 
-        <h2 className="font-bold text-xl text-gray-400">00:00</h2>
+        <h2 className="font-bold text-xl text-gray-400">{formatTime(timer)}</h2>
       </div>
 
       {sessionDetail && (

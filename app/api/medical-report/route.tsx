@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { openai } from "@/config/OpenAiModel";
 import { db } from "@/config/db";
-import { sessionChatTable } from "@/config/schema";
+import { sessionChatTable, reportsTable } from "@/config/schema";
+import { eq } from "drizzle-orm";
 
 const REPORT_GEN_PROMPT = `You are an AI Medical Voice Agent that just finished a voice conversation with user.Based on doctor AI agent info and Conversation between AI medical Agent and user,generate a structured report with the following fields:
 
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
       JSON.stringify(messages);
 
     const completion = await openai.chat.completions.create({
-      model: "google/gemini-2.5-pro",
+      model: "google/gemini-2.0-flash-001",
       messages: [
         {
           role: "system",
@@ -69,13 +70,35 @@ export async function POST(req: NextRequest) {
       throw e;
     }
 
+    // Sanitize: ensure both values are valid JSON-serializable objects
+    const safeReport = typeof reportJson === "object" ? reportJson : {};
+    const safeConversation = Array.isArray(messages) ? messages : [];
+
     // Save to Database
-    const result = await db.update(sessionChatTable).set({
-      report: reportJson,
-      conversation: messages,
-      //@ts-ignore
+    await db.update(sessionChatTable).set({
+      report: safeReport,
+      conversation: safeConversation,
     }).where(eq(sessionChatTable.sessionId, sessionId));
-    //@ts-ignore
+
+    // Also insert into the dedicated reports table
+    try {
+      // First, get the createdBy from the session to link it correctly
+      const sessionInfo = await db.select({ createdBy: sessionChatTable.createdBy }).from(sessionChatTable).where(eq(sessionChatTable.sessionId, sessionId)).limit(1);
+
+      if (sessionInfo.length > 0 && sessionInfo[0].createdBy) {
+        await db.insert(reportsTable).values({
+          sessionId: sessionId,
+          reportData: safeReport,
+          specialist: sessionDetail?.specialist || "General Physician",
+          chiefComplaint: safeReport.chiefComplaint || "",
+          createdBy: sessionInfo[0].createdBy,
+          createdOn: new Date().toISOString(),
+        });
+      }
+    } catch (insertError) {
+      console.error("Failed to insert into reportsTable:", insertError);
+      // We don't throw here to avoid failing the overall report generation
+    }
 
     return NextResponse.json(reportJson);
   } 

@@ -34,10 +34,10 @@ export async function POST(req: NextRequest) {
       createdBy: user.primaryEmailAddress.emailAddress,
       notes,
       selectedDoctor: doctorId,
-      conversation: [],                    
-      report: "", 
+      conversation: [],
+      report: null,
       createdOn: new Date().toISOString(),
-    }).returning(); // <-- changed
+    }).returning();
 
     return NextResponse.json(result[0]);
   } catch (e: any) {

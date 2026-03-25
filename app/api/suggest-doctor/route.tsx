@@ -7,7 +7,7 @@ export async function POST(req:NextRequest) {
     const{notes}=await req.json();
     try{
     const completion = await openai.chat.completions.create({
-    model: 'google/gemini-2.5-flash-lite-preview-06-17',
+    model: 'google/gemini-2.0-flash-001',
     messages: [
           {
         role: 'system',
@@ -15,7 +15,7 @@ export async function POST(req:NextRequest) {
       },
       {
         role: 'user',
-        content: 'User Notes/Symptoms:'+notes+",Depends on user notes and symptoms,Please suggest list of Doctors,Return object in json only",
+        content: 'User Notes/Symptoms: ' + notes + ". Based on the user symptoms, please suggest the most relevant doctors from the provided list. Return the complete objects for each suggested doctor (including id, specialist, description, image, agentPrompt, voiceId) as a JSON array.",
       },
     ],
   });
