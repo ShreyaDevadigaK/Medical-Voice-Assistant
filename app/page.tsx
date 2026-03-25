@@ -105,8 +105,8 @@ const Navbar = () => {
   const router = useRouter();
   return (
     <nav className="flex w-full items-center justify-between border-t border-b border-neutral-200 px-4 py-4 dark:border-neutral-800">
-      <div className="flex items-center gap-2">
-        <div className="size-7 rounded-full bg-gradient-to-br from-violet-500 to-pink-500" />
+      <div className="flex items-center gap-3">
+        <img src="/favicon-removebg-preview.png" alt="MediVoice AI Icon" className="w-10 h-12 md:w-12 md:h-12 object-contain rounded-md" />
         <h1 className="text-base font-bold md:text-2xl">MediVoice AI</h1>
       </div>
       {!user ? (
